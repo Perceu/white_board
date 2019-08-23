@@ -1,5 +1,6 @@
 from tkinter import *
 from tkinter.colorchooser import askcolor
+from tkinter import messagebox
 
 class Paint(object):
 
@@ -54,7 +55,10 @@ class Paint(object):
         self.color = self.DEFAULT_BLACK
         self.eraser_on = False
         self.active_button = self.pen_button_black
+        self.root.bind("<F12>", self.quit)
         self.root.bind("<F11>", self.toogle_fullscreen)
+        self.root.bind("<F5>", self.clean_canvas)
+        self.root.bind("<F1>", self.help)
         self.c.bind('<B1-Motion>', self.paint)
         self.c.bind('<ButtonRelease-1>', self.reset)
         self.line_width = self.PEN_SIZE
@@ -64,6 +68,14 @@ class Paint(object):
         self.color = self.DEFAULT_BLACK
         self.line_width = self.PEN_SIZE
         self.activate_button(self.pen_button_black)
+
+    def help(self, event=None):
+        messagebox.showinfo("Help","""
+        <f12> Fecha o programa\n
+        <f11> Tela Cheia\n
+         <f5> Limpa Tela\n
+         <f1> Ajuda\n
+        """)
 
     def use_pen_red(self):
         self.color = self.DEFAULT_RED
@@ -89,6 +101,9 @@ class Paint(object):
 
         self.root.attributes("-fullscreen", self.fullscreen)
 
+    def quit(self, event=None):
+       self.root.destroy()
+
     def use_eraser(self):
         self.line_width = self.ERASER_SIZE
         self.activate_button(self.eraser_button, eraser_mode=True)
@@ -100,7 +115,7 @@ class Paint(object):
         self.c.create_line(10, 0, 10, 20)
         self.c.create_line(10, 60, self.root.winfo_width(), 60)
 
-    def clean_canvas(self):
+    def clean_canvas(self, event=None):
         self.c.delete("all")
 
     def activate_button(self, some_button, eraser_mode=False):
@@ -110,7 +125,6 @@ class Paint(object):
         self.eraser_on = eraser_mode
 
     def paint(self, event):
-        
         paint_color = 'white' if self.eraser_on else self.color
         if self.old_x and self.old_y:
             self.c.create_line(self.old_x, self.old_y, event.x, event.y,
